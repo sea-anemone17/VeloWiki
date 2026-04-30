@@ -171,13 +171,35 @@ function setupAutosave() {
     clearTimeout(autosaveTimer);
 
     autosaveTimer = setTimeout(() => {
-      saveCurrentPage();
-      showNotice("자동 저장됨");
-    }, 1500);
+      autosaveCurrentPage();
+    }, 5000);
   }
 
   contentInput.addEventListener("input", triggerAutosave);
   titleInput.addEventListener("input", triggerAutosave);
+}
+
+function autosaveCurrentPage() {
+  if (currentRoute.type !== "page" || !editing) return;
+
+  const oldTitle = currentRoute.value;
+  const nextTitle = normalizeTitle(els.titleInput.value);
+  const content = els.contentInput.value;
+
+  try {
+    const page = upsertPage(data, oldTitle, nextTitle, content);
+    saveData(data);
+    showNotice("자동 저장됨");
+
+    if (page.title !== oldTitle) {
+      history.replaceState(null, "", `#/page/${encodeURIComponent(page.title)}`);
+      currentRoute = getRoute();
+    }
+
+    renderSidebar(data, page.title, searchQuery);
+  } catch (error) {
+    showNotice(error.message || "자동 저장 실패");
+  }
 }
 
 function boot() {
