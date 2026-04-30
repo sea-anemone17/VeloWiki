@@ -1,206 +1,49 @@
 import { renderWiki, escapeHTML } from "./parser.js";
-import {
-  getAllPages,
-  getBacklinks,
-  getCategoryMap,
-  getChildren,
-  getOrphanPages,
-  getPage,
-  getPagesByCategory,
-  getParentTitle,
-  getRecentPages,
-  getWantedPages,
-  searchPages
-} from "./pageManager.js";
-
-const emptyTemplate = () => document.querySelector("#emptyListTemplate").content.cloneNode(true);
-
-export function formatDate(iso) {
-  if (!iso) return "-";
-
-  return new Intl.DateTimeFormat("ko-KR", {
-    dateStyle: "medium",
-    timeStyle: "short"
-  }).format(new Date(iso));
+import { getSpaceLabel, getHomePage, SPECIAL_LABELS } from "./constants.js";
+import { getAllPages, getBacklinks, getCategoryMap, getChildren, getOrphanPages, getPage, getPagesByCategory, getParentTitle, getRecentPages, getWantedPages, searchPages, sortKoreanTitles } from "./pageManager.js";
+const emptyTemplate=()=>document.querySelector("#emptyListTemplate").content.cloneNode(true);
+export function formatDate(iso){ if(!iso) return "-"; return new Intl.DateTimeFormat("ko-KR",{dateStyle:"medium",timeStyle:"short"}).format(new Date(iso)); }
+function pageHref(space,title,tab="view"){ return `#/${space}/page/${encodeURIComponent(title)}${tab!=="view"?`/${tab}`:""}`; }
+function linkHTML(space,title,activeTitle="",options={}){ const active=title===activeTitle?"active":""; const missing=options.missing?"missing":""; return `<a class="${[active,missing].filter(Boolean).join(" ")}" href="${pageHref(space,title)}">${escapeHTML(title)}</a>`; }
+function renderNavList(container, items, activeTitle="", options={}){ container.innerHTML=""; if(!items.length){ container.append(emptyTemplate()); return; } container.innerHTML=items.map(item=> typeof item==="string" ? linkHTML(options.space||"study",item,activeTitle,options) : linkHTML(item.space,item.title,activeTitle,options)).join(""); }
+export function updateSpaceTabs(route){ document.querySelector("#studyTab").classList.toggle("active",route.space==="study"); document.querySelector("#profileTab").classList.toggle("active",route.space==="profile"); document.querySelector("#specialTab").classList.toggle("active",route.space==="special"); }
+export function renderSidebar(data, route, query=""){
+  const space=route.space==="profile"?"profile":"study"; const activeTitle=route.type==="page"?route.value:"";
+  document.querySelector("#spaceListTitle").textContent=`${getSpaceLabel(space)} 문서`;
+  const pages=query?searchPages(data,query,space):getAllPages(data,space);
+  renderNavList(document.querySelector("#pageList"),pages.map(p=>p.title),activeTitle,{space});
+  renderNavList(document.querySelector("#recentList"),getRecentPages(data,8,space).map(p=>p.title),activeTitle,{space});
+  const categories=getCategoryMap(data,space);
+  document.querySelector("#categoryList").innerHTML=categories.length?categories.map(({category,titles})=>`<a href="#/${space}/category/${encodeURIComponent(category)}">${escapeHTML(category)} <span class="pill">${titles.length}</span></a>`).join(""):`<p class="empty">아직 없습니다.</p>`;
+  document.querySelector("#pageCount").textContent=String(getAllPages(data,space).length);
 }
-
-function linkHTML(title, activeTitle = "", options = {}) {
-  const active = title === activeTitle ? "active" : "";
-  const missing = options.missing ? "missing" : "";
-  const className = [active, missing].filter(Boolean).join(" ");
-
-  return `<a class="${className}" href="#/page/${encodeURIComponent(title)}">${escapeHTML(title)}</a>`;
+function renderPageTabs(space,title,activeTab){ const tabs=[['view','문서'],['backlinks','역링크'],['info','정보']]; document.querySelector("#pageTabs").innerHTML=tabs.map(([tab,label])=>`<a class="${activeTab===tab?'active':''}" href="${pageHref(space,title,tab)}">${label}</a>`).join(""); document.querySelector("#pageTabs").classList.remove("hidden"); }
+function renderBreadcrumb(space,title){ const parts=title.split('/'); if(parts.length<=1) return ""; const crumbs=[]; for(let i=0;i<parts.length;i++){ const path=parts.slice(0,i+1).join('/'); crumbs.push(`<a href="${pageHref(space,path)}">${escapeHTML(parts[i])}</a>`); } return crumbs.join(' <span>›</span> '); }
+function childDocsHTML(data,space,title){ const children=getChildren(data,space,title,true); if(!children.length) return ""; return `<section class="child-docs-box"><h2>하위 문서</h2><ul>${children.map(p=>`<li><a class="wiki-link" href="${pageHref(space,p.title)}">${escapeHTML(p.title)}</a></li>`).join("")}</ul></section>`; }
+export function renderPage(data, route, editing=false){
+  const {space,value:title,tab}=route; const page=getPage(data,space,title);
+  const pageTitle=document.querySelector("#pageTitle"), pageMeta=document.querySelector("#pageMeta"), breadcrumb=document.querySelector("#breadcrumb"), viewer=document.querySelector("#viewer"), editorWrap=document.querySelector("#editorWrap"), titleInput=document.querySelector("#titleInput"), spaceInput=document.querySelector("#spaceInput"), contentInput=document.querySelector("#contentInput"), editBtn=document.querySelector("#editBtn"), deleteBtn=document.querySelector("#deleteBtn"), saveBtn=document.querySelector("#saveBtn"), cancelBtn=document.querySelector("#cancelBtn");
+  if(!page){ pageTitle.textContent=title; pageMeta.textContent=`${getSpaceLabel(space)} · 아직 없는 문서`; breadcrumb.innerHTML=renderBreadcrumb(space,title); renderPageTabs(space,title,'view'); viewer.innerHTML=`<p>이 문서는 아직 없습니다. <button id="createMissingBtn" class="primary-btn" type="button">문서 만들기</button></p>`; document.querySelector("#createMissingBtn")?.addEventListener("click",()=>window.dispatchEvent(new CustomEvent("velowiki:create-missing",{detail:{space,title}}))); viewer.classList.remove("hidden"); editorWrap.classList.add("hidden"); editBtn.classList.add("hidden"); deleteBtn.classList.add("hidden"); saveBtn.classList.add("hidden"); cancelBtn.classList.add("hidden"); renderSideInfo(data,space,title); return; }
+  pageTitle.textContent=page.title; pageMeta.textContent=`${getSpaceLabel(page.space)} · 최근 수정 시각: ${formatDate(page.updatedAt)} · 수정 ${page.revisionCount ?? 1}회`; breadcrumb.innerHTML=renderBreadcrumb(page.space,page.title); renderPageTabs(page.space,page.title,editing?'view':tab);
+  if(editing){ titleInput.value=page.title; spaceInput.value=page.space; contentInput.value=page.content; viewer.classList.add("hidden"); editorWrap.classList.remove("hidden"); editBtn.classList.add("hidden"); deleteBtn.classList.add("hidden"); saveBtn.classList.remove("hidden"); cancelBtn.classList.remove("hidden"); renderSideInfo(data,page.space,page.title); return; }
+  editorWrap.classList.add("hidden"); viewer.classList.remove("hidden"); editBtn.classList.toggle("hidden",tab!=="view"); deleteBtn.classList.toggle("hidden",tab!=="view"); saveBtn.classList.add("hidden"); cancelBtn.classList.add("hidden");
+  if(tab==="backlinks"){ const backlinks=getBacklinks(data,page.space,page.title); viewer.innerHTML=`<section class="special-box"><h2>역링크</h2>${backlinks.length?`<ul>${backlinks.map(p=>`<li><a class="wiki-link" href="${pageHref(p.space,p.title)}">${escapeHTML(getSpaceLabel(p.space))}: ${escapeHTML(p.title)}</a></li>`).join("")}</ul>`:`<p class="empty">이 문서를 가리키는 문서가 없습니다.</p>`}</section>`; }
+  else if(tab==="info"){ const children=getChildren(data,page.space,page.title); viewer.innerHTML=`<section class="special-box"><h2>문서 정보</h2><ul><li>공간: ${escapeHTML(getSpaceLabel(page.space))}</li><li>생성: ${formatDate(page.createdAt)}</li><li>수정: ${formatDate(page.updatedAt)}</li><li>분류: ${(page.categories||[]).map(escapeHTML).join(', ')||'없음'}</li><li>하위 문서: ${children.length}개</li></ul></section>`; }
+  else { viewer.innerHTML=renderWiki(page.content,data,page.space)+childDocsHTML(data,page.space,page.title); }
+  renderSideInfo(data,page.space,page.title);
 }
-
-function renderNavList(container, titles, activeTitle = "", options = {}) {
-  container.innerHTML = "";
-
-  if (!titles.length) {
-    container.append(emptyTemplate());
-    return;
-  }
-
-  container.innerHTML = titles.map((title) => linkHTML(title, activeTitle, options)).join("");
+export function renderCategoryPage(data, route){ const {space,value:category}=route; const pages=getPagesByCategory(data,category,space); document.querySelector("#pageTabs").classList.add("hidden"); document.querySelector("#breadcrumb").innerHTML=""; document.querySelector("#pageTitle").textContent=`분류:${category}`; document.querySelector("#pageMeta").textContent=`${getSpaceLabel(space)} · ${pages.length}개 문서`; document.querySelector("#viewer").innerHTML=pages.length?`<ul>${pages.map(p=>`<li>${linkHTML(space,p.title)}</li>`).join("")}</ul>`:`<p class="empty">이 분류에는 아직 문서가 없습니다.</p>`; document.querySelector("#viewer").classList.remove("hidden"); document.querySelector("#editorWrap").classList.add("hidden"); hideActions(); document.querySelector("#pageInfo").innerHTML=`<div class="info-row"><span class="info-label">분류</span><span class="info-value">${escapeHTML(category)}</span></div>`; }
+export function renderSpecialPage(data, name="wanted"){
+  document.querySelector("#pageTabs").classList.add("hidden"); document.querySelector("#breadcrumb").innerHTML="특수 문서"; document.querySelector("#pageTitle").textContent=`특수:${SPECIAL_LABELS[name]||name}`; document.querySelector("#pageMeta").textContent="위키 관리 화면"; document.querySelector("#editorWrap").classList.add("hidden"); document.querySelector("#viewer").classList.remove("hidden"); hideActions();
+  let html="";
+  if(name==="wanted"){ const wanted=getWantedPages(data); html=`<section class="special-box"><h2>필요 문서</h2>${wanted.length?`<ul>${wanted.map(w=>`<li><a class="wiki-link missing" href="${pageHref(w.space,w.title)}">${escapeHTML(getSpaceLabel(w.space))}: ${escapeHTML(w.title)}</a> <span class="empty">(${w.from.length}회 언급)</span></li>`).join("")}</ul>`:`<p class="empty">필요 문서가 없습니다.</p>`}</section>`; }
+  else if(name==="orphan"){ const orphan=getOrphanPages(data,"study"); html=`<section class="special-box"><h2>고립 문서</h2><p class="empty">프로필 문서는 고립 문서로 취급하지 않습니다.</p>${orphan.length?`<ul>${orphan.map(p=>`<li><a class="wiki-link" href="${pageHref(p.space,p.title)}">${escapeHTML(p.title)}</a></li>`).join("")}</ul>`:`<p class="empty">고립 문서가 없습니다.</p>`}</section>`; }
+  else if(name==="recent"){ const recent=getRecentPages(data,50); html=`<section class="special-box"><h2>최근 변경</h2><ul>${recent.map(p=>`<li><a class="wiki-link" href="${pageHref(p.space,p.title)}">${escapeHTML(getSpaceLabel(p.space))}: ${escapeHTML(p.title)}</a> <span class="empty">${formatDate(p.updatedAt)}</span></li>`).join("")}</ul></section>`; }
+  else if(name==="categories"){ const maps=['study','profile'].map(space=>({space,categories:getCategoryMap(data,space)})); html=maps.map(({space,categories})=>`<section class="special-box"><h2>${escapeHTML(getSpaceLabel(space))} 분류</h2>${categories.length?`<ul>${categories.map(c=>`<li><a class="wiki-link" href="#/${space}/category/${encodeURIComponent(c.category)}">${escapeHTML(c.category)}</a> <span class="empty">${c.titles.length}개</span></li>`).join("")}</ul>`:`<p class="empty">분류가 없습니다.</p>`}</section>`).join(""); }
+  else html=`<p class="empty">알 수 없는 특수 문서입니다.</p>`;
+  document.querySelector("#viewer").innerHTML=html; document.querySelector("#pageInfo").innerHTML=`<div class="info-row"><span class="info-label">종류</span><span class="info-value">특수 문서</span></div>`;
 }
-
-export function renderSidebar(data, activeTitle, query = "") {
-  const pages = query ? searchPages(data, query) : getAllPages(data);
-  const pageList = document.querySelector("#pageList");
-  const recentList = document.querySelector("#recentList");
-  const categoryList = document.querySelector("#categoryList");
-
-  renderNavList(pageList, pages.map((page) => page.title), activeTitle);
-  renderNavList(recentList, getRecentPages(data).map((page) => page.title), activeTitle);
-
-  const categories = getCategoryMap(data);
-
-  categoryList.innerHTML = categories.length
-    ? categories
-        .map(({ category, titles }) => `<a href="#/category/${encodeURIComponent(category)}">${escapeHTML(category)} <span class="pill">${titles.length}</span></a>`)
-        .join("")
-    : `<p class="empty">아직 없습니다.</p>`;
-
-  document.querySelector("#pageCount").textContent = String(Object.keys(data.pages).length);
-}
-
-export function renderPage(data, title, editing = false) {
-  const page = getPage(data, title);
-
-  const pageTitle = document.querySelector("#pageTitle");
-  const pageMeta = document.querySelector("#pageMeta");
-  const breadcrumb = document.querySelector("#breadcrumb");
-  const viewer = document.querySelector("#viewer");
-  const editorWrap = document.querySelector("#editorWrap");
-  const titleInput = document.querySelector("#titleInput");
-  const contentInput = document.querySelector("#contentInput");
-  const editBtn = document.querySelector("#editBtn");
-  const deleteBtn = document.querySelector("#deleteBtn");
-  const saveBtn = document.querySelector("#saveBtn");
-  const cancelBtn = document.querySelector("#cancelBtn");
-
-  if (!page) {
-    pageTitle.textContent = title;
-    pageMeta.textContent = "아직 없는 문서입니다.";
-    breadcrumb.innerHTML = "";
-    viewer.innerHTML = `<p>이 문서는 아직 없습니다. <button id="createMissingBtn" class="primary-btn" type="button">문서 만들기</button></p>`;
-
-    document.querySelector("#createMissingBtn")?.addEventListener("click", () => {
-      window.dispatchEvent(new CustomEvent("velowiki:create-missing", { detail: { title } }));
-    });
-
-    viewer.classList.remove("hidden");
-    editorWrap.classList.add("hidden");
-    editBtn.classList.add("hidden");
-    deleteBtn.classList.add("hidden");
-    saveBtn.classList.add("hidden");
-    cancelBtn.classList.add("hidden");
-    renderSideInfo(data, title);
-    return;
-  }
-
-  const parent = getParentTitle(page.title);
-
-  breadcrumb.innerHTML = parent
-    ? `상위 문서: <a href="#/page/${encodeURIComponent(parent)}">${escapeHTML(parent)}</a>`
-    : "";
-
-  pageTitle.textContent = page.title;
-  pageMeta.textContent = `최근 수정 시각: ${formatDate(page.updatedAt)} · 수정 ${page.revisionCount ?? 1}회`;
-
-  if (editing) {
-    titleInput.value = page.title;
-    contentInput.value = page.content;
-    viewer.classList.add("hidden");
-    editorWrap.classList.remove("hidden");
-    editBtn.classList.add("hidden");
-    deleteBtn.classList.add("hidden");
-    saveBtn.classList.remove("hidden");
-    cancelBtn.classList.remove("hidden");
-  } else {
-    viewer.innerHTML = renderWiki(page.content, data.pages);
-    viewer.classList.remove("hidden");
-    editorWrap.classList.add("hidden");
-    editBtn.classList.remove("hidden");
-    deleteBtn.classList.remove("hidden");
-    saveBtn.classList.add("hidden");
-    cancelBtn.classList.add("hidden");
-  }
-
-  renderSideInfo(data, page.title);
-}
-
-export function renderCategoryPage(data, category) {
-  const pages = getPagesByCategory(data, category);
-
-  document.querySelector("#breadcrumb").innerHTML = "";
-  document.querySelector("#pageTitle").textContent = `분류:${category}`;
-  document.querySelector("#pageMeta").textContent = `${pages.length}개 문서`;
-  document.querySelector("#viewer").innerHTML = pages.length
-    ? `<ul>${pages.map((page) => `<li>${linkHTML(page.title)}</li>`).join("")}</ul>`
-    : `<p class="empty">이 분류에는 아직 문서가 없습니다.</p>`;
-
-  document.querySelector("#viewer").classList.remove("hidden");
-  document.querySelector("#editorWrap").classList.add("hidden");
-  document.querySelector("#editBtn").classList.add("hidden");
-  document.querySelector("#deleteBtn").classList.add("hidden");
-  document.querySelector("#saveBtn").classList.add("hidden");
-  document.querySelector("#cancelBtn").classList.add("hidden");
-
-  document.querySelector("#pageInfo").innerHTML = `<div class="info-row"><span class="info-label">분류</span><span class="info-value">${escapeHTML(category)}</span></div>`;
-
-  renderGlobalWikiPanels(data);
-  renderNavList(document.querySelector("#childrenList"), []);
-  renderNavList(document.querySelector("#backlinkList"), []);
-}
-
-export function renderSideInfo(data, title) {
-  const page = getPage(data, title);
-  const backlinks = getBacklinks(data, title);
-  const children = getChildren(data, title);
-  const parent = getParentTitle(title);
-
-  const pageInfo = document.querySelector("#pageInfo");
-  const childrenList = document.querySelector("#childrenList");
-  const backlinkList = document.querySelector("#backlinkList");
-
-  pageInfo.innerHTML = page
-    ? `
-      <div class="info-row"><span class="info-label">제목</span><span class="info-value">${escapeHTML(page.title)}</span></div>
-      <div class="info-row"><span class="info-label">생성</span><span class="info-value">${formatDate(page.createdAt)}</span></div>
-      <div class="info-row"><span class="info-label">수정</span><span class="info-value">${formatDate(page.updatedAt)}</span></div>
-      <div class="info-row"><span class="info-label">분류</span><span class="info-value">${(page.categories || []).map(escapeHTML).join(", ") || "없음"}</span></div>
-      ${parent ? `<div class="info-row"><span class="info-label">상위 문서</span><span class="info-value"><a href="#/page/${encodeURIComponent(parent)}">${escapeHTML(parent)}</a></span></div>` : ""}
-    `
-    : `<div class="info-row"><span class="info-label">상태</span><span class="info-value">없는 문서</span></div>`;
-
-  renderNavList(childrenList, children, title);
-  renderNavList(backlinkList, backlinks, title);
-  renderGlobalWikiPanels(data);
-}
-
-export function renderGlobalWikiPanels(data) {
-  const wanted = getWantedPages(data);
-  const orphan = getOrphanPages(data, data.settings?.homePage || "홈");
-
-  const wantedList = document.querySelector("#wantedList");
-  const orphanList = document.querySelector("#orphanList");
-
-  renderNavList(wantedList, wanted, "", { missing: true });
-  renderNavList(orphanList, orphan, "");
-
-  document.querySelector("#wantedCount").textContent = String(wanted.length);
-  document.querySelector("#orphanCount").textContent = String(orphan.length);
-}
-
-export function showNotice(message) {
-  const notice = document.querySelector("#notice");
-  notice.textContent = message;
-  notice.classList.remove("hidden");
-
-  window.clearTimeout(showNotice.timer);
-  showNotice.timer = window.setTimeout(() => notice.classList.add("hidden"), 2400);
-}
-
-export function closeMobileSidebar() {
-  document.querySelector("#sidebar")?.classList.remove("open");
-}
+function hideActions(){ for(const id of ['#editBtn','#deleteBtn','#saveBtn','#cancelBtn']) document.querySelector(id).classList.add('hidden'); }
+export function renderSideInfo(data,space,title){ const page=getPage(data,space,title); const parent=getParentTitle(title); document.querySelector("#pageInfo").innerHTML=page?`<div class="info-row"><span class="info-label">공간</span><span class="info-value">${escapeHTML(getSpaceLabel(space))}</span></div><div class="info-row"><span class="info-label">제목</span><span class="info-value">${escapeHTML(page.title)}</span></div><div class="info-row"><span class="info-label">생성</span><span class="info-value">${formatDate(page.createdAt)}</span></div><div class="info-row"><span class="info-label">수정</span><span class="info-value">${formatDate(page.updatedAt)}</span></div><div class="info-row"><span class="info-label">분류</span><span class="info-value">${(page.categories||[]).map(escapeHTML).join(', ')||'없음'}</span></div>${parent?`<div class="info-row"><span class="info-label">상위 문서</span><span class="info-value"><a href="${pageHref(space,parent)}">${escapeHTML(parent)}</a></span></div>`:""}`:`<div class="info-row"><span class="info-label">상태</span><span class="info-value">없는 문서</span></div>`; }
+export function showNotice(message){ const notice=document.querySelector("#notice"); notice.textContent=message; notice.classList.remove("hidden"); window.clearTimeout(showNotice.timer); showNotice.timer=window.setTimeout(()=>notice.classList.add("hidden"),2400); }
+export function closeMobileSidebar(){ document.querySelector("#sidebar")?.classList.remove("open"); }
