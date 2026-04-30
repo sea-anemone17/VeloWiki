@@ -553,3 +553,52 @@ a {
     padding-right: 18px;
   }
 }
+
+.toc-box {
+  border: 1px solid var(--line);
+  background: var(--surface-2);
+  border-radius: 18px;
+  padding: 16px;
+  margin-bottom: 28px;
+}
+
+.toc-box h2 {
+  margin-top: 0;
+  font-size: 1rem;
+}
+
+.toc-box ul {
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
+}
+
+.toc-box li {
+  margin: 6px 0;
+}
+
+.toc-box a {
+  text-decoration: none;
+  color: var(--link);
+}
+
+.toc-level-2 {
+  padding-left: 12px;
+}
+
+.toc-level-3 {
+  padding-left: 24px;
+}
+
+.toc-link {
+  border: 0;
+  background: transparent;
+  color: var(--link);
+  padding: 0;
+  cursor: pointer;
+  text-align: left;
+}
+
+.toc-link:hover {
+  text-decoration: underline;
+}
