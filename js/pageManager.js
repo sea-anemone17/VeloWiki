@@ -6,6 +6,7 @@ export function normalizeTitle(title = "") {
 
 export function createEmptyPage(title) {
   const now = new Date().toISOString();
+
   return {
     title,
     content: `# ${title}\n\n아직 작성되지 않은 문서입니다.\n\n[[분류:미분류]]`,
@@ -24,8 +25,9 @@ export function pageExists(data, title) {
   return Boolean(data.pages[title]);
 }
 
-export function upsertPage(data, oldTitle, nextTitle, content) {
+export function upsertPage(data, oldTitle, nextTitle, content, options = {}) {
   const title = normalizeTitle(nextTitle);
+
   if (!title) throw new Error("문서 제목이 비어 있습니다.");
 
   const now = new Date().toISOString();
@@ -36,13 +38,16 @@ export function upsertPage(data, oldTitle, nextTitle, content) {
     delete data.pages[oldTitle];
   }
 
+  const previousRevision = previous?.revisionCount || 0;
+  const shouldCountRevision = options.countRevision !== false;
+
   data.pages[title] = {
     title,
     content,
     categories,
     createdAt: previous?.createdAt || now,
     updatedAt: now,
-    revisionCount: (previous?.revisionCount || 0) + 1
+    revisionCount: shouldCountRevision ? previousRevision + 1 : Math.max(previousRevision, 1)
   };
 
   return data.pages[title];
@@ -50,9 +55,11 @@ export function upsertPage(data, oldTitle, nextTitle, content) {
 
 export function ensurePage(data, title) {
   const normalized = normalizeTitle(title);
+
   if (!data.pages[normalized]) {
     data.pages[normalized] = createEmptyPage(normalized);
   }
+
   return data.pages[normalized];
 }
 
@@ -68,6 +75,7 @@ export function getRecentPages(data, limit = 8) {
 
 export function searchPages(data, query) {
   const q = query.trim().toLowerCase();
+
   if (!q) return getAllPages(data);
 
   return getAllPages(data).filter((page) => {
@@ -81,6 +89,7 @@ export function searchPages(data, query) {
 
 export function getCategoryMap(data) {
   const map = new Map();
+
   for (const page of Object.values(data.pages)) {
     for (const category of page.categories || []) {
       if (!map.has(category)) map.set(category, []);
@@ -108,6 +117,7 @@ export function getBacklinks(data, targetTitle) {
 
 export function getChildren(data, title) {
   const prefix = `${title}/`;
+
   return getAllPages(data)
     .filter((page) => page.title.startsWith(prefix))
     .map((page) => page.title);
@@ -115,6 +125,7 @@ export function getChildren(data, title) {
 
 export function getParentTitle(title) {
   if (!title.includes("/")) return null;
+
   return title.split("/").slice(0, -1).join("/");
 }
 
@@ -129,4 +140,18 @@ export function getWantedPages(data) {
   }
 
   return [...wanted].sort((a, b) => a.localeCompare(b, "ko"));
+}
+
+export function getOrphanPages(data, homePage = "홈") {
+  const referenced = new Set();
+
+  for (const page of Object.values(data.pages)) {
+    for (const link of extractLinks(page.content)) {
+      if (data.pages[link]) referenced.add(link);
+    }
+  }
+
+  return getAllPages(data)
+    .map((page) => page.title)
+    .filter((title) => title !== homePage && !referenced.has(title));
 }

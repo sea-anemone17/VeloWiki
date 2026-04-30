@@ -9,6 +9,7 @@ export function routeToCategory(category) {
 export function getRoute() {
   const hash = window.location.hash || "#/page/홈";
   const [, type, rawValue] = hash.split("/");
+
   return {
     type: type || "page",
     value: decodeURIComponent(rawValue || "홈")

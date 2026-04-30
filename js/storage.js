@@ -9,6 +9,7 @@ function clone(value) {
 export function loadData() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
+
     if (!raw) {
       const seeded = clone(DEFAULT_DATA);
       saveData(seeded);
@@ -16,6 +17,7 @@ export function loadData() {
     }
 
     const parsed = JSON.parse(raw);
+
     if (!parsed.pages || typeof parsed.pages !== "object") {
       throw new Error("Invalid VeloWiki data");
     }
