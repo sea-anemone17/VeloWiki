@@ -82,6 +82,90 @@ function renderInline(text, pages) {
   return html;
 }
 
+function renderEmbeds(content, pages) {
+  let html = content;
+
+  html = html.replace(/\{\{image:([^|}]+)\|?([^}]*)\}\}/g, (_, src, caption) => {
+    return `
+      <figure class="media-card">
+        <img src="${escapeHTML(src.trim())}" alt="${escapeHTML(caption.trim() || "이미지")}" loading="lazy" />
+        ${caption.trim() ? `<figcaption>${escapeHTML(caption.trim())}</figcaption>` : ""}
+      </figure>
+    `;
+  });
+
+  html = html.replace(/\{\{youtube:([^}]+)\}\}/g, (_, id) => {
+    const videoId = id.trim();
+    return `
+      <div class="video-card">
+        <iframe
+          src="https://www.youtube.com/embed/${escapeHTML(videoId)}"
+          title="YouTube video"
+          loading="lazy"
+          allowfullscreen>
+        </iframe>
+      </div>
+    `;
+  });
+
+  html = html.replace(/\{\{link:([^|}]+)\|?([^}]*)\}\}/g, (_, url, label) => {
+    const safeUrl = escapeHTML(url.trim());
+    const safeLabel = escapeHTML(label.trim() || url.trim());
+
+    return `
+      <a class="link-card" href="${safeUrl}" target="_blank" rel="noopener noreferrer">
+        <span class="link-card-title">${safeLabel}</span>
+        <span class="link-card-url">${safeUrl}</span>
+      </a>
+    `;
+  });
+
+  return html;
+}
+
+function renderInfobox(content, pages) {
+  const match = /\{\{정보상자([\s\S]*?)\}\}/.exec(content);
+  if (!match) {
+    return {
+      content,
+      infoboxHTML: ""
+    };
+  }
+
+  const raw = match[1].trim();
+  const rows = raw
+    .split("\n")
+    .map(line => line.trim())
+    .filter(line => line.startsWith("|"))
+    .map(line => {
+      const [key, ...rest] = line.slice(1).split("=");
+      return {
+        key: key.trim(),
+        value: rest.join("=").trim()
+      };
+    });
+
+  const imageRow = rows.find(row => row.key === "이미지");
+  const normalRows = rows.filter(row => row.key !== "이미지");
+
+  const infoboxHTML = `
+    <aside class="infobox">
+      ${imageRow ? `<img src="${escapeHTML(imageRow.value)}" alt="정보상자 이미지" />` : ""}
+      ${normalRows.map(row => `
+        <div class="infobox-row">
+          <strong>${escapeHTML(row.key)}</strong>
+          <span>${renderInline(row.value, pages)}</span>
+        </div>
+      `).join("")}
+    </aside>
+  `;
+
+  return {
+    content: content.replace(match[0], "").trim(),
+    infoboxHTML
+  };
+}
+
 function extractHeadings(content = "") {
   const headings = [];
   const lines = content.split(/\r?\n/);
@@ -200,7 +284,10 @@ export function renderWiki(content = "", pages = {}) {
   let visibleContent = stripCategorySyntax(content);
   visibleContent = stripFootnoteDefinitions(visibleContent);
 
-  const body = renderBlocks(visibleContent, pages);
+  const infoboxResult = renderInfobox(visibleContent, pages);
+  visibleContent = infoboxResult.content;
+
+  const body = renderEmbeds(renderBlocks(visibleContent, pages), pages);
 
   const footnoteHTML = Object.keys(footnotes).length
     ? `<section class="footnotes"><h2>주석</h2><ol>${Object.entries(footnotes)
@@ -233,5 +320,5 @@ export function renderWiki(content = "", pages = {}) {
     `
     : "";
 
-  return `${tocHTML}${body}${footnoteHTML}${categoryHTML}`;
+  return `${tocHTML}${infoboxResult.infoboxHTML}${body}${footnoteHTML}${categoryHTML}`;
 }
