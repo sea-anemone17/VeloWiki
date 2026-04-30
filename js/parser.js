@@ -79,6 +79,23 @@ function renderInline(text, pages) {
   return html;
 }
 
+function extractHeadings(content = "") {
+  const headings = [];
+  const lines = content.split(/\r?\n/);
+
+  for (const line of lines) {
+    const match = /^(#{1,3})\s+(.+)$/.exec(line.trim());
+    if (match) {
+      headings.push({
+        level: match[1].length,
+        text: match[2].trim()
+      });
+    }
+  }
+
+  return headings;
+}
+
 function renderBlocks(content, pages) {
   const lines = content.split(/\r?\n/);
   const html = [];
@@ -86,6 +103,7 @@ function renderBlocks(content, pages) {
   let list = [];
   let inCode = false;
   let codeLines = [];
+  let headingIndex = 0;
 
   function flushParagraph() {
     if (paragraph.length) {
@@ -140,7 +158,11 @@ function renderBlocks(content, pages) {
       flushList();
       const level = heading[1].length;
       const text = heading[2];
-      html.push(`<h${level}>${renderInline(text, pages)}</h${level}>`);
+      html.push(
+        `<h${level} id="section-${headingIndex++}">
+          ${renderInline(text, pages)}
+        </h${level}>`
+      );
       continue;
     }
 
@@ -189,5 +211,22 @@ export function renderWiki(content = "", pages = {}) {
         .join("")}</section>`
     : "";
 
-  return `${body}${footnoteHTML}${categoryHTML}`;
+  const headings = extractHeadings(visibleContent);
+
+  const tocHTML = headings.length > 1
+    ? `
+      <nav class="toc-box">
+        <h2>목차</h2>
+        <ul>
+          ${headings.map((heading, index) => `
+            <li class="toc-level-${heading.level}">
+              <a href="#section-${index}">${escapeHTML(heading.text)}</a>
+            </li>
+          `).join("")}
+        </ul>
+      </nav>
+    `
+    : "";
+
+  return `${tocHTML}${body}${footnoteHTML}${categoryHTML}`;
 }
