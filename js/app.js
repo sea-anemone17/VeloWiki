@@ -4,6 +4,7 @@ import { getRoute, onRouteChange, routeToPage } from "./router.js";
 import { closeMobileSidebar, renderCategoryPage, renderPage, renderSidebar, showNotice } from "./ui.js";
 
 let data = loadData();
+let autosaveTimer;
 let currentRoute = getRoute();
 let editing = false;
 let searchQuery = "";
@@ -126,11 +127,31 @@ function bindEvents() {
   });
 }
 
+function setupAutosave() {
+  const contentInput = document.querySelector("#contentInput");
+  const titleInput = document.querySelector("#titleInput");
+
+  function triggerAutosave() {
+    if (!editing) return;
+
+    clearTimeout(autosaveTimer);
+
+    autosaveTimer = setTimeout(() => {
+      saveCurrentPage();
+      showNotice("자동 저장됨");
+    }, 1500);
+  }
+
+  contentInput.addEventListener("input", triggerAutosave);
+  titleInput.addEventListener("input", triggerAutosave);
+}
+
 function boot() {
   if (!window.location.hash) {
     routeToPage(data.settings?.homePage || "홈");
   }
   bindEvents();
+  setupAutosave();
   render();
 }
 
