@@ -54,10 +54,13 @@ function renderInline(text, pages) {
   html = html.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
 
   html = html.replace(/\[\^([^\]]+)\]/g, (_, id) => {
-    const safeId = encodeURIComponent(id);
-    return `<sup><a href="#footnote-${safeId}" id="ref-${safeId}">[${escapeHTML(id)}]</a></sup>`;
+    return `<sup>
+      <button type="button" class="footnote-ref" data-footnote-id="${escapeHTML(id)}">
+        [${escapeHTML(id)}]
+      </button>
+    </sup>`;
   });
-
+  
   html = html.replace(WIKI_LINK_RE, (_, rawTarget, rawLabel) => {
     const target = rawTarget.trim();
     const label = (rawLabel || target).trim();
@@ -201,7 +204,7 @@ export function renderWiki(content = "", pages = {}) {
 
   const footnoteHTML = Object.keys(footnotes).length
     ? `<section class="footnotes"><h2>주석</h2><ol>${Object.entries(footnotes)
-        .map(([id, text]) => `<li id="footnote-${encodeURIComponent(id)}"><strong>[${escapeHTML(id)}]</strong> ${renderInline(text, pages)}</li>`)
+        .map(([id, text]) => `<li data-footnote-item="${escapeHTML(id)}"><strong>[${escapeHTML(id)}]</strong> ${renderInline(text, pages)}</li>`)
         .join("")}</ol></section>`
     : "";
 
