@@ -139,6 +139,18 @@ function bindEvents() {
     routeToPage(title);
   });
 
+  document.addEventListener("click", (event) => {
+    const tocLink = event.target.closest(".toc-link");
+    if (!tocLink) return;
+
+    const sectionId = tocLink.dataset.section;
+    const section = document.getElementById(sectionId);
+
+    if (section) {
+      section.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  });
+
   document.addEventListener("keydown", (event) => {
     if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "s") {
       if (editing) {
