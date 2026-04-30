@@ -151,6 +151,18 @@ function bindEvents() {
     }
   });
 
+  document.addEventListener("click", (event) => {
+    const ref = event.target.closest(".footnote-ref");
+    if (!ref) return;
+
+    const id = ref.dataset.footnoteId;
+    const item = document.querySelector(`[data-footnote-item="${CSS.escape(id)}"]`);
+
+    if (!item) return;
+
+    showFootnotePopup(ref, item.textContent.trim());
+  });
+
   document.addEventListener("keydown", (event) => {
     if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "s") {
       if (editing) {
@@ -200,6 +212,30 @@ function autosaveCurrentPage() {
   } catch (error) {
     showNotice(error.message || "자동 저장 실패");
   }
+}
+
+function showFootnotePopup(anchor, text) {
+  document.querySelector(".footnote-popup")?.remove();
+
+  const popup = document.createElement("div");
+  popup.className = "footnote-popup";
+  popup.textContent = text;
+
+  document.body.appendChild(popup);
+
+  const rect = anchor.getBoundingClientRect();
+
+  popup.style.left = `${Math.min(rect.left, window.innerWidth - 320)}px`;
+  popup.style.top = `${rect.bottom + window.scrollY + 8}px`;
+
+  setTimeout(() => {
+    document.addEventListener("click", closeFootnotePopup, { once: true });
+  }, 0);
+}
+
+function closeFootnotePopup(event) {
+  if (event.target.closest(".footnote-popup") || event.target.closest(".footnote-ref")) return;
+  document.querySelector(".footnote-popup")?.remove();
 }
 
 function boot() {
