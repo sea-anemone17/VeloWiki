@@ -1,0 +1,186 @@
+@media (max-width: 1180px) {
+  .layout {
+    grid-template-columns: minmax(230px, 260px) minmax(0, 1fr);
+  }
+
+  .rightbar {
+    position: static;
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    max-height: none;
+    overflow: visible;
+  }
+}
+
+@media (max-width: 860px) {
+  :root {
+    --topbar-height: 0px;
+  }
+
+  .topbar {
+    position: sticky;
+    grid-template-columns: auto 1fr auto;
+    gap: var(--space-3);
+    padding: var(--space-3);
+  }
+
+  .brand-mark {
+    width: 42px;
+    height: 42px;
+  }
+
+  .brand small {
+    display: none;
+  }
+
+  .search-box {
+    grid-column: 1 / -1;
+    order: 4;
+  }
+
+  .topbar-actions {
+    justify-content: flex-end;
+  }
+
+  .topbar-actions .ghost-btn {
+    display: none;
+  }
+
+  .mobile-only {
+    display: inline-flex;
+  }
+
+  .layout {
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+    padding: var(--space-3);
+  }
+
+  .sidebar {
+    position: static;
+    display: none;
+    max-height: none;
+    overflow: visible;
+  }
+
+  .sidebar.open {
+    display: flex;
+  }
+
+  .rightbar {
+    grid-template-columns: 1fr;
+  }
+
+  .document-head {
+    padding: var(--space-6) var(--space-5) var(--space-4);
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+
+  .document-actions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .document-tabs {
+    padding: var(--space-3) var(--space-5);
+    overflow-x: auto;
+    flex-wrap: nowrap;
+  }
+
+  .wiki-view,
+  .editor-wrap {
+    padding: var(--space-5);
+  }
+
+  #pageTitle {
+    font-size: clamp(2rem, 14vw, 3rem);
+  }
+
+  .infobox {
+    float: none;
+    width: 100%;
+    margin: 0 0 var(--space-5);
+  }
+
+  .space-tabs {
+    grid-column: 1 / -1;
+    width: 100%;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    border-radius: var(--radius-lg);
+  }
+
+  .space-tab {
+    flex: 1 0 auto;
+  }
+}
+
+@media (max-width: 520px) {
+  body {
+    background: var(--bg);
+  }
+
+  .topbar {
+    border-bottom-color: var(--line);
+    background: var(--surface);
+  }
+
+  .brand strong {
+    font-size: 1rem;
+  }
+
+  .primary-btn,
+  .ghost-btn,
+  .icon-btn,
+  .tab-btn,
+  .space-tab {
+    min-height: 38px;
+    padding: 8px 12px;
+  }
+
+  .panel,
+  .document-card {
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .document-head {
+    padding: var(--space-5) var(--space-4) var(--space-4);
+  }
+
+  .wiki-view,
+  .editor-wrap {
+    padding: var(--space-4);
+  }
+
+  .wiki-view {
+    font-size: 0.98rem;
+    line-height: 1.78;
+  }
+
+  .wiki-view h1 {
+    font-size: 1.65rem;
+  }
+
+  .wiki-view h2 {
+    font-size: 1.28rem;
+  }
+
+  .field textarea {
+    min-height: 62vh;
+    font-size: 0.9rem;
+  }
+
+  .infobox-row {
+    grid-template-columns: 70px minmax(0, 1fr);
+  }
+
+  .footnote-popup {
+    left: 12px !important;
+    right: 12px;
+    max-width: none;
+  }
+}

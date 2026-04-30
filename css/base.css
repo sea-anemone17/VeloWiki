@@ -1,0 +1,65 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  text-size-adjust: 100%;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  color: var(--ink);
+  font-family: var(--sans);
+  background:
+    radial-gradient(circle at top left, var(--brand-glow), transparent 34rem),
+    radial-gradient(circle at 90% 10%, rgba(166, 124, 75, 0.10), transparent 26rem),
+    linear-gradient(135deg, var(--bg), var(--bg-2));
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+a {
+  color: inherit;
+}
+
+img,
+iframe {
+  max-width: 100%;
+}
+
+::selection {
+  color: var(--surface-raised);
+  background: var(--brand);
+}
+
+.app-shell {
+  min-height: 100vh;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.empty {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
+code {
+  font-family: var(--mono);
+}

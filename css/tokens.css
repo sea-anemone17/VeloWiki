@@ -1,0 +1,97 @@
+:root {
+  /* Brand */
+  --brand-hue: 138;
+  --brand: #3f8053;
+  --brand-strong: #255939;
+  --brand-soft: #e5f1e7;
+  --brand-glow: rgba(63, 128, 83, 0.18);
+
+  /* Warm wiki palette */
+  --bg: #f7f1e8;
+  --bg-2: #efe2d0;
+  --surface: #fffaf2;
+  --surface-raised: #fffdf8;
+  --surface-soft: #f2e7d5;
+  --surface-muted: #eadbc5;
+
+  --ink: #27211c;
+  --ink-soft: #493f35;
+  --muted: #7a6b5c;
+  --muted-2: #9a8977;
+
+  --line: #deccb6;
+  --line-soft: rgba(222, 204, 182, 0.68);
+  --link: #2f6698;
+  --link-visited: #604d8b;
+  --danger: #a6533f;
+  --danger-soft: #f3dfd9;
+  --warning: #9f6b1d;
+  --warning-soft: #f7ead3;
+
+  /* Shape */
+  --radius-xs: 8px;
+  --radius-sm: 11px;
+  --radius-md: 15px;
+  --radius-lg: 19px;
+  --radius-xl: 24px;
+  --radius-full: 999px;
+
+  /* Rhythm */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-7: 32px;
+  --space-8: 40px;
+
+  /* Layout */
+  --topbar-height: 84px;
+  --sidebar-width: 292px;
+  --rightbar-width: 284px;
+  --max-shell: 1540px;
+
+  /* Effects */
+  --shadow-sm: 0 5px 14px rgba(47, 34, 20, 0.07);
+  --shadow-md: 0 14px 36px rgba(47, 34, 20, 0.11);
+  --shadow-lg: 0 24px 70px rgba(47, 34, 20, 0.14);
+  --ring: 0 0 0 4px rgba(63, 128, 83, 0.14);
+
+  /* Typography */
+  --sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans KR", "Apple SD Gothic Neo", sans-serif;
+  --serif: ui-serif, "Noto Serif KR", "Apple Myungjo", Georgia, serif;
+  --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #1d1915;
+    --bg-2: #15120f;
+    --surface: #29231d;
+    --surface-raised: #312a23;
+    --surface-soft: #3a3027;
+    --surface-muted: #46392d;
+
+    --ink: #f7ead8;
+    --ink-soft: #ead9c4;
+    --muted: #c2ad96;
+    --muted-2: #a58e76;
+
+    --line: #5a4938;
+    --line-soft: rgba(90, 73, 56, 0.7);
+    --link: #8cb9e8;
+    --link-visited: #b7a5e8;
+
+    --brand: #75b887;
+    --brand-strong: #9bd1a8;
+    --brand-soft: #263d2c;
+    --brand-glow: rgba(117, 184, 135, 0.17);
+
+    --danger-soft: #4b2822;
+    --warning-soft: #4a3821;
+    --shadow-sm: 0 5px 14px rgba(0, 0, 0, 0.2);
+    --shadow-md: 0 16px 44px rgba(0, 0, 0, 0.24);
+    --shadow-lg: 0 28px 80px rgba(0, 0, 0, 0.32);
+  }
+}

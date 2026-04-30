@@ -1,0 +1,42 @@
+.editor-wrap {
+  background: color-mix(in srgb, var(--surface) 86%, var(--surface-raised));
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-bottom: var(--space-5);
+}
+
+.field span {
+  color: var(--muted);
+  font-size: 0.86rem;
+  font-weight: 900;
+}
+
+.field input,
+.field textarea {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: 13px 14px;
+  outline: 0;
+  color: var(--ink);
+  background: var(--surface-raised);
+}
+
+.field textarea {
+  min-height: 54vh;
+  resize: vertical;
+  font-family: var(--mono);
+  font-size: 0.95rem;
+  line-height: 1.7;
+}
+
+.help-text {
+  margin: var(--space-3) 0 0;
+  color: var(--muted);
+  font-size: 0.88rem;
+  line-height: 1.7;
+}
