@@ -220,7 +220,9 @@ export function renderWiki(content = "", pages = {}) {
         <ul>
           ${headings.map((heading, index) => `
             <li class="toc-level-${heading.level}">
-              <a href="#section-${index}">${escapeHTML(heading.text)}</a>
+              <button type="button" class="toc-link" data-section="section-${index}">
+                ${escapeHTML(heading.text)}
+              </button>
             </li>
           `).join("")}
         </ul>
