@@ -9,13 +9,14 @@ export function escapeHTML(value = "") {
 
 export function safeURL(url = "") {
   const trimmed = String(url).trim();
-
   try {
-    const parsed = new URL(trimmed, window.location.href);
+    const parsed = new URL(trimmed, globalThis.location?.href || "http://localhost/");
     const allowed = ["http:", "https:", "data:", "blob:"];
     if (!allowed.includes(parsed.protocol)) return "#";
     return trimmed;
-  } catch {
-    return "#";
-  }
+  } catch { return "#"; }
+}
+
+export function getPageKey(space, title) {
+  return `${space}::${title}`;
 }
