@@ -4,27 +4,38 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>VeloWiki</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%2327211c'/%3E%3Ctext x='32' y='42' text-anchor='middle' font-size='32' font-family='Arial' font-weight='700' fill='%23fffaf2'%3EV%3C/text%3E%3C/svg%3E" />
   <link rel="stylesheet" href="./css/style.css" />
 </head>
 <body>
   <div class="app-shell">
     <header class="topbar">
-      <button id="sidebarToggle" class="icon-btn mobile-only" aria-label="사이드바 열기">☰</button>
-      <a class="brand" href="#/study/page/홈" aria-label="VeloWiki 홈으로 이동">
-        <span class="brand-mark">V</span>
-        <span><strong>VeloWiki</strong><small>Personal knowledge wiki</small></span>
-      </a>
-      <nav class="space-tabs" aria-label="공간 전환">
-        <a id="studyTab" href="#/study/page/홈">개념</a>
-        <a id="profileTab" href="#/profile/page/프로필 홈">프로필</a>
-        <a id="specialTab" href="#/special/wanted">특수</a>
-      </nav>
-      <label class="search-box" aria-label="문서 검색">
-        <span>⌕</span><input id="searchInput" type="search" placeholder="현재 공간에서 검색..." autocomplete="off" />
-      </label>
-      <div class="topbar-actions">
-        <button id="randomPageBtn" class="ghost-btn" type="button">랜덤 문서</button>
-        <button id="newPageBtn" class="primary-btn" type="button">+ 새 문서</button>
+      <div class="topbar-main">
+        <button id="sidebarToggle" class="icon-btn mobile-only" aria-label="사이드바 열기">☰</button>
+
+        <a class="brand" href="#/study/page/홈" aria-label="VeloWiki 홈으로 이동">
+          <span class="brand-mark">V</span>
+          <span class="brand-text">
+            <strong>VeloWiki</strong>
+            <small>Personal knowledge wiki</small>
+          </span>
+        </a>
+
+        <nav class="space-tabs" aria-label="공간 전환">
+          <a id="studyTab" href="#/study/page/홈">개념</a>
+          <a id="profileTab" href="#/profile/page/프로필 홈">프로필</a>
+          <a id="specialTab" href="#/special/wanted">특수</a>
+        </nav>
+
+        <label class="search-box" aria-label="문서 검색">
+          <span>⌕</span>
+          <input id="searchInput" type="search" placeholder="현재 공간에서 검색..." autocomplete="off" />
+        </label>
+
+        <div class="topbar-actions">
+          <button id="randomPageBtn" class="ghost-btn" type="button">랜덤 문서</button>
+          <button id="newPageBtn" class="primary-btn" type="button">+ 새 문서</button>
+        </div>
       </div>
     </header>
 
