@@ -1,34 +1,28 @@
 :root {
-  /* Brand */
-  --brand-hue: 138;
-  --brand: #3f8053;
-  --brand-strong: #255939;
-  --brand-soft: #e5f1e7;
-  --brand-glow: rgba(63, 128, 83, 0.18);
-
-  /* Warm wiki palette */
   --bg: #f7f1e8;
   --bg-2: #efe2d0;
   --surface: #fffaf2;
   --surface-raised: #fffdf8;
-  --surface-soft: #f2e7d5;
-  --surface-muted: #eadbc5;
+  --surface-soft: #f1e5d2;
+  --surface-muted: #e8d8bf;
 
   --ink: #27211c;
-  --ink-soft: #493f35;
+  --ink-soft: #4b4036;
   --muted: #7a6b5c;
   --muted-2: #9a8977;
 
+  --brand: #3f8053;
+  --brand-strong: #275f3d;
+  --brand-soft: #e5f1e7;
+  --brand-glow: rgba(63, 128, 83, 0.18);
+
   --line: #deccb6;
-  --line-soft: rgba(222, 204, 182, 0.68);
+  --line-soft: rgba(222, 204, 182, 0.7);
   --link: #2f6698;
   --link-visited: #604d8b;
   --danger: #a6533f;
   --danger-soft: #f3dfd9;
-  --warning: #9f6b1d;
-  --warning-soft: #f7ead3;
 
-  /* Shape */
   --radius-xs: 8px;
   --radius-sm: 11px;
   --radius-md: 15px;
@@ -36,7 +30,6 @@
   --radius-xl: 24px;
   --radius-full: 999px;
 
-  /* Rhythm */
   --space-1: 4px;
   --space-2: 8px;
   --space-3: 12px;
@@ -46,21 +39,17 @@
   --space-7: 32px;
   --space-8: 40px;
 
-  /* Layout */
-  --topbar-height: 84px;
+  --topbar-height: 92px;
   --sidebar-width: 292px;
   --rightbar-width: 284px;
   --max-shell: 1540px;
 
-  /* Effects */
-  --shadow-sm: 0 5px 14px rgba(47, 34, 20, 0.07);
-  --shadow-md: 0 14px 36px rgba(47, 34, 20, 0.11);
-  --shadow-lg: 0 24px 70px rgba(47, 34, 20, 0.14);
+  --shadow-sm: 0 6px 16px rgba(47, 34, 20, 0.07);
+  --shadow-md: 0 16px 42px rgba(47, 34, 20, 0.11);
+  --shadow-lg: 0 28px 80px rgba(47, 34, 20, 0.15);
   --ring: 0 0 0 4px rgba(63, 128, 83, 0.14);
 
-  /* Typography */
   --sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans KR", "Apple SD Gothic Neo", sans-serif;
-  --serif: ui-serif, "Noto Serif KR", "Apple Myungjo", Georgia, serif;
   --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
 }
 
@@ -89,9 +78,8 @@
     --brand-glow: rgba(117, 184, 135, 0.17);
 
     --danger-soft: #4b2822;
-    --warning-soft: #4a3821;
-    --shadow-sm: 0 5px 14px rgba(0, 0, 0, 0.2);
-    --shadow-md: 0 16px 44px rgba(0, 0, 0, 0.24);
-    --shadow-lg: 0 28px 80px rgba(0, 0, 0, 0.32);
+    --shadow-sm: 0 6px 16px rgba(0, 0, 0, 0.2);
+    --shadow-md: 0 18px 50px rgba(0, 0, 0, 0.25);
+    --shadow-lg: 0 30px 90px rgba(0, 0, 0, 0.34);
   }
 }

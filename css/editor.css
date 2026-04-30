@@ -2,6 +2,12 @@
   background: color-mix(in srgb, var(--surface) 86%, var(--surface-raised));
 }
 
+.field-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 180px;
+  gap: var(--space-4);
+}
+
 .field {
   display: flex;
   flex-direction: column;
@@ -16,7 +22,8 @@
 }
 
 .field input,
-.field textarea {
+.field textarea,
+.field select {
   width: 100%;
   border: 1px solid var(--line);
   border-radius: var(--radius-lg);

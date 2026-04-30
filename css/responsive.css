@@ -13,42 +13,54 @@
   }
 }
 
-@media (max-width: 860px) {
+@media (max-width: 920px) {
   :root {
     --topbar-height: 0px;
   }
 
   .topbar {
-    position: sticky;
-    grid-template-columns: auto 1fr auto;
-    gap: var(--space-3);
     padding: var(--space-3);
   }
 
-  .brand-mark {
-    width: 42px;
-    height: 42px;
-  }
-
-  .brand small {
-    display: none;
-  }
-
-  .search-box {
-    grid-column: 1 / -1;
-    order: 4;
-  }
-
-  .topbar-actions {
-    justify-content: flex-end;
-  }
-
-  .topbar-actions .ghost-btn {
-    display: none;
+  .topbar-main {
+    grid-template-columns: auto 1fr auto;
+    gap: var(--space-3);
   }
 
   .mobile-only {
     display: inline-flex;
+  }
+
+  .brand {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .topbar-actions {
+    grid-column: 3;
+    grid-row: 1;
+  }
+
+  .space-tabs {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    width: 100%;
+    overflow-x: auto;
+    justify-content: flex-start;
+    border-radius: var(--radius-lg);
+  }
+
+  .space-tabs a {
+    flex: 1 0 auto;
+  }
+
+  .search-box {
+    grid-column: 1 / -1;
+    grid-row: 3;
+  }
+
+  .topbar-actions .ghost-btn {
+    display: none;
   }
 
   .layout {
@@ -83,10 +95,8 @@
     justify-content: flex-start;
   }
 
-  .document-tabs {
+  .page-tabs {
     padding: var(--space-3) var(--space-5);
-    overflow-x: auto;
-    flex-wrap: nowrap;
   }
 
   .wiki-view,
@@ -104,21 +114,12 @@
     margin: 0 0 var(--space-5);
   }
 
-  .space-tabs {
-    grid-column: 1 / -1;
-    width: 100%;
-    overflow-x: auto;
-    flex-wrap: nowrap;
-    justify-content: flex-start;
-    border-radius: var(--radius-lg);
-  }
-
-  .space-tab {
-    flex: 1 0 auto;
+  .field-grid {
+    grid-template-columns: 1fr;
   }
 }
 
-@media (max-width: 520px) {
+@media (max-width: 540px) {
   body {
     background: var(--bg);
   }
@@ -128,15 +129,22 @@
     background: var(--surface);
   }
 
+  .brand-mark {
+    width: 42px;
+    height: 42px;
+  }
+
   .brand strong {
     font-size: 1rem;
   }
 
+  .brand small {
+    display: none;
+  }
+
   .primary-btn,
   .ghost-btn,
-  .icon-btn,
-  .tab-btn,
-  .space-tab {
+  .icon-btn {
     min-height: 38px;
     padding: 8px 12px;
   }

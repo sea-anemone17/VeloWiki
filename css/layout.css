@@ -2,14 +2,19 @@
   position: sticky;
   top: 0;
   z-index: 40;
-  display: grid;
-  grid-template-columns: auto minmax(180px, 260px) minmax(220px, 1fr) auto;
-  gap: var(--space-4);
-  align-items: center;
   padding: var(--space-4) var(--space-5);
   border-bottom: 1px solid var(--line-soft);
-  background: color-mix(in srgb, var(--surface) 84%, transparent);
+  background: color-mix(in srgb, var(--surface) 88%, transparent);
   backdrop-filter: blur(18px) saturate(1.12);
+}
+
+.topbar-main {
+  width: min(100%, var(--max-shell));
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: minmax(180px, 260px) auto minmax(240px, 1fr) auto;
+  gap: var(--space-4);
+  align-items: center;
 }
 
 .brand {
@@ -35,6 +40,10 @@
   font-weight: 900;
   letter-spacing: -0.04em;
   box-shadow: var(--shadow-sm);
+}
+
+.brand-text {
+  min-width: 0;
 }
 
 .brand strong {

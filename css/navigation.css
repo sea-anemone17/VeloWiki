@@ -1,54 +1,72 @@
-.space-tabs,
-.mode-tabs,
-.document-tabs,
-.tab-row {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  flex-wrap: wrap;
-}
-
 .space-tabs {
-  grid-column: 1 / -1;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
   width: fit-content;
   max-width: 100%;
-  margin-top: calc(var(--space-2) * -1);
   padding: 5px;
   border: 1px solid var(--line);
   border-radius: var(--radius-full);
-  background: color-mix(in srgb, var(--surface-raised) 78%, transparent);
+  background: color-mix(in srgb, var(--surface-raised) 82%, transparent);
   box-shadow: var(--shadow-sm);
 }
 
-.space-tab {
+.space-tabs a {
   min-height: 36px;
   border-radius: var(--radius-full);
-  padding-inline: 16px;
-  font-weight: 800;
+  padding: 8px 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink);
+  font-weight: 900;
+  text-decoration: none;
+  transition: background-color 0.15s ease, color 0.15s ease;
 }
 
-.space-tab.active,
-.space-tab[aria-current="page"],
-.space-tab.is-active,
-.tab-btn.active,
-.tab-btn[aria-selected="true"],
-.tab-btn.is-active {
+.space-tabs a:hover {
+  background: var(--surface-soft);
+}
+
+.space-tabs a.active,
+.space-tabs a[aria-current="page"] {
   color: #fff;
-  border-color: var(--brand);
   background: var(--brand);
 }
 
-.document-tabs {
+.page-tabs {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
   padding: var(--space-3) var(--space-7);
   border-bottom: 1px solid var(--line-soft);
   background: color-mix(in srgb, var(--surface) 84%, var(--surface-soft));
+  overflow-x: auto;
 }
 
-.tab-btn {
+.page-tabs a {
   min-height: 36px;
+  border: 1px solid var(--line);
   border-radius: var(--radius-full);
-  padding-inline: 15px;
-  font-weight: 800;
+  padding: 8px 15px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink);
+  background: var(--surface-raised);
+  font-weight: 900;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.page-tabs a:hover {
+  background: var(--surface-soft);
+}
+
+.page-tabs a.active {
+  color: #fff;
+  border-color: var(--brand);
+  background: var(--brand);
 }
 
 .nav-list {
@@ -102,47 +120,38 @@
   padding: 6px 10px;
 }
 
-.breadcrumb,
-.breadcrumb-chain {
+.breadcrumb {
   min-height: 20px;
   margin: 0 0 5px;
   color: var(--muted);
   font-size: 0.86rem;
 }
 
-.breadcrumb a,
-.breadcrumb-chain a {
+.breadcrumb a {
   color: var(--muted);
   text-decoration: none;
 }
 
-.breadcrumb a:hover,
-.breadcrumb-chain a:hover {
+.breadcrumb a:hover {
   color: var(--link);
   text-decoration: underline;
 }
 
-.special-grid,
-.special-list,
-.page-grid {
-  display: grid;
-  gap: var(--space-3);
+.special-links {
+  margin-top: var(--space-1);
 }
 
-.special-card,
-.list-card,
-.child-docs {
+.special-box,
+.child-docs-box {
+  clear: both;
+  margin: var(--space-5) 0;
   border: 1px solid var(--line-soft);
   border-radius: var(--radius-lg);
-  padding: var(--space-4);
+  padding: var(--space-5);
   background: var(--surface-raised);
 }
 
-.child-docs {
-  clear: both;
-  margin-top: var(--space-6);
-}
-
-.child-docs h2 {
+.special-box h2,
+.child-docs-box h2 {
   margin-top: 0;
 }

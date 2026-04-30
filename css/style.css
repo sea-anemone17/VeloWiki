@@ -1,9 +1,7 @@
 /*
-  VeloWiki CSS Refactor v0.8.1
-  - Replace your existing css/style.css with this import hub.
-  - Keep all files in the css/ folder together.
+  VeloWiki v0.8.2 Stable Layout Rebuild
+  HTML 구조와 맞춘 CSS 대공사 버전입니다.
 */
-
 @import "./tokens.css";
 @import "./base.css";
 @import "./layout.css";

@@ -29,8 +29,6 @@
 .primary-btn,
 .ghost-btn,
 .icon-btn,
-.tab-btn,
-.space-tab,
 .load-video-btn {
   min-height: 40px;
   border: 1px solid transparent;
@@ -60,17 +58,13 @@
 }
 
 .ghost-btn,
-.icon-btn,
-.tab-btn,
-.space-tab {
+.icon-btn {
   border-color: var(--line);
 }
 
 .primary-btn:hover,
 .ghost-btn:hover,
 .icon-btn:hover,
-.tab-btn:hover,
-.space-tab:hover,
 .load-video-btn:hover {
   transform: translateY(-1px);
   box-shadow: var(--shadow-sm);
@@ -82,20 +76,17 @@
 }
 
 .ghost-btn:hover,
-.icon-btn:hover,
-.tab-btn:hover,
-.space-tab:hover {
+.icon-btn:hover {
   background: var(--surface-soft);
 }
 
 .primary-btn:focus-visible,
 .ghost-btn:focus-visible,
 .icon-btn:focus-visible,
-.tab-btn:focus-visible,
-.space-tab:focus-visible,
 .search-box:focus-within,
 .field input:focus,
-.field textarea:focus {
+.field textarea:focus,
+.field select:focus {
   outline: none;
   box-shadow: var(--ring);
 }
@@ -128,6 +119,7 @@
 .topbar-actions {
   display: flex;
   align-items: center;
+  justify-content: flex-end;
   gap: var(--space-2);
 }
 
