@@ -19,7 +19,8 @@ const els = {
   titleInput: document.querySelector("#titleInput"),
   contentInput: document.querySelector("#contentInput"),
   sidebarToggle: document.querySelector("#sidebarToggle"),
-  sidebar: document.querySelector("#sidebar")
+  sidebar: document.querySelector("#sidebar"),
+  deleteBtn: document.querySelector("#deleteBtn")
 };
 
 function render() {
@@ -45,6 +46,26 @@ function startEdit() {
 function cancelEdit() {
   editing = false;
   render();
+}
+
+function deleteCurrentPage() {
+  if (currentRoute.type !== "page") return;
+
+  const title = currentRoute.value;
+
+  if (title === "홈") {
+    showNotice("홈 문서는 삭제할 수 없습니다.");
+    return;
+  }
+
+  if (!confirm(`정말 "${title}" 문서를 삭제할까요?`)) return;
+
+  delete data.pages[title];
+  saveData(data);
+
+  editing = false;
+  showNotice("문서를 삭제했습니다.");
+  routeToPage("홈");
 }
 
 function saveCurrentPage() {
@@ -103,6 +124,7 @@ function bindEvents() {
   els.editBtn.addEventListener("click", startEdit);
   els.saveBtn.addEventListener("click", saveCurrentPage);
   els.cancelBtn.addEventListener("click", cancelEdit);
+  els.deleteBtn.addEventListener("click", deleteCurrentPage);
 
   els.sidebarToggle.addEventListener("click", () => {
     els.sidebar.classList.toggle("open");
