@@ -89,7 +89,8 @@
 
             <p class="help-text">
               링크: <code>[[문서명]]</code>, 표시명: <code>[[문서명|보이는 이름]]</code>,
-              분류: <code>[[분류:수학]]</code>, 주석: <code>[^1]</code> + <code>[^1]: 설명</code>
+              분류: <code>[[분류:수학]]</code>, 주석: <code>[^1]</code> + <code>[^1]: 설명</code>,
+              이미지: <code>{{image:URL|캡션}}</code>, 영상: <code>{{youtube:영상ID}}</code>
             </p>
           </section>
         </article>
@@ -115,6 +116,22 @@
             <h2>역링크</h2>
           </div>
           <nav id="backlinkList" class="nav-list compact"></nav>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head">
+            <h2>필요 문서</h2>
+            <span id="wantedCount" class="pill">0</span>
+          </div>
+          <nav id="wantedList" class="nav-list compact"></nav>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head">
+            <h2>고립 문서</h2>
+            <span id="orphanCount" class="pill">0</span>
+          </div>
+          <nav id="orphanList" class="nav-list compact"></nav>
         </section>
       </aside>
     </main>
